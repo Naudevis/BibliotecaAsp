@@ -1,0 +1,83 @@
+﻿
+@page "/addbook"
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+<h3>ComponentBook</h3>
+@inject IBookRepository BookRepository
+@inject IAuthorRepository AuthorRepository
+
+@inject NavigationManager Navigation
+<h3></h3>
+<EditForm Model="NuevoLibro" OnInvalidSubmit="SaveR">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <div>
+
+        <label> Código Libro </label>
+        <InputText @bind-Value="NuevoLibro.Id_Book" class="form-control" />
+
+    </div>
+    <div>
+
+        <label> Titullo del Libro </label>
+        <InputText  @bind-Value="NuevoLibro.Title" class="form-control"/>
+
+    </div>
+    <div>
+
+        <label> Páginas </label>
+        <InputText @bind-Value="NuevoLibro.Pages" class="form-control" />
+
+    </div>
+    <div>
+
+        <label> Precio </label>
+        <InputNumber @bind-Value="NuevoLibro.Price" class="form-control" />
+
+    </div>
+    <div>
+
+        <label> Fecha de Edisión </label>
+        <InputDate @bind-Value="NuevoLibro.EditionDate" class="form-control" />
+
+    </div>
+    <div>
+
+        <label> Autor </label>
+        <select  @bind="NuevoLibro.Author_id" class="form-select">@*?*@
+            <option value="">Seleccione un Autor</option>
+
+            @foreach(var autor in Authors){
+                <option value="@autor.Author_id">@autor.Name</option>
+
+            }
+        </select>
+
+    </div>
+
+
+    <button type="submit" class="btn btn-secondary" @onclick="SaveR">Guardar</button>
+
+</EditForm>
+
+@code {
+    private Book NuevoLibro = new();
+    private List<Author> Authors = new();
+
+
+    protected override async Task OnInitializedAsync(){
+        Authors = (await AuthorRepository.GetAllAsync()).ToList();
+    }
+
+    private async Task SaveR(){
+
+        var existBook = (await BookRepository.GetBookByIdAsync(NuevoLibro.Id_Book));
+        if (existBook != null) {
+            await BookRepository.AddBookAsync(NuevoLibro);
+            Navigation.NavigateTo("/book");
+        }
+        else {
+            Console.WriteLine($"El autor {NuevoLibro.Id_Book} ya existe");
+        }
+           
+    } 
+}
