@@ -12,7 +12,9 @@ namespace Biblioteca.Data.Models
 
         public string Biography { get; set; }
 
-      //Relación con Books
+        public int Status_id { get; set; }
+        public Status StatusAuthor { get; set; }
+        //Relación con Books
         public ICollection<Book> Books { get; set; }
 
     }

@@ -1,24 +1,39 @@
 ﻿
 @page "/addbook"
+@using Biblioteca.Business.Interfaces
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
-<h3>ComponentBook</h3>
+
 @inject IBookRepository BookRepository
 @inject IAuthorRepository AuthorRepository
-
+@using Biblioteca.Data.Models
 @inject NavigationManager Navigation
-<h3></h3>
-<EditForm Model="NuevoLibro" OnInvalidSubmit="SaveR">
+
+<EditForm Model="NuevoLibro" OnValidSubmit="OnSubmit">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
+
+
+    <p style="color:red">@Message</p>
+    @if (Title=="Actualizar"){
+        <div>
+
+            <label> Código Libro </label>
+            <InputText @bind-Value="NuevoLibro.Id_Book" class="form-control" disabled/>
+
+        </div>
+    }else{
+        <div>
+
+            <label> Código Libro </label>
+            <InputText @bind-Value="NuevoLibro.Id_Book" class="form-control" />
+
+        </div>
+    }
+    
+
     <div>
 
-        <label> Código Libro </label>
-        <InputText @bind-Value="NuevoLibro.Id_Book" class="form-control" />
-
-    </div>
-    <div>
-
-        <label> Titullo del Libro </label>
+        <label> Título del Libro </label>
         <InputText  @bind-Value="NuevoLibro.Title" class="form-control"/>
 
     </div>
@@ -36,7 +51,7 @@
     </div>
     <div>
 
-        <label> Fecha de Edisión </label>
+        <label> Fecha de Edición </label>
         <InputDate @bind-Value="NuevoLibro.EditionDate" class="form-control" />
 
     </div>
@@ -55,29 +70,22 @@
     </div>
 
 
-    <button type="submit" class="btn btn-secondary" @onclick="SaveR">Guardar</button>
+    <div class="modal-footer">
+        @ChildContent
 
+        <button type="submit" class="btn btn-success">@Title</button>
+    </div>
 </EditForm>
 
 @code {
-    private Book NuevoLibro = new();
-    private List<Author> Authors = new();
+   [Parameter]
+     public Book NuevoLibro  { get; set; }
+   [Parameter] public List<Author> Authors  {get;set;}
+   [Parameter] public string Title  {get;set;}
+   [Parameter] public string Message  {get;set;}
 
-
-    protected override async Task OnInitializedAsync(){
-        Authors = (await AuthorRepository.GetAllAsync()).ToList();
-    }
-
-    private async Task SaveR(){
-
-        var existBook = (await BookRepository.GetBookByIdAsync(NuevoLibro.Id_Book));
-        if (existBook != null) {
-            await BookRepository.AddBookAsync(NuevoLibro);
-            Navigation.NavigateTo("/book");
-        }
-        else {
-            Console.WriteLine($"El autor {NuevoLibro.Id_Book} ya existe");
-        }
-           
-    } 
+    [Parameter] public EventCallback OnSubmit { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+ 
+   
 }

@@ -1,0 +1,253 @@
+﻿@page "/list-author"
+@using Biblioteca.Business.Interfaces
+@using Biblioteca.Data.Models
+@rendermode InteractiveServer
+@inject IAuthorRepository AuthorRepository
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+
+<div class="containerHead container-fluid shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+    <h3 style="padding-left:20px;">Autores</h3>
+    <div title="Agregar tarea">
+        <svg style="color:#4C60EB;" class="bi bi-window-plus iconAction" @onclick="cleanSpaces" data-bs-toggle="modal" data-bs-target="#ModalAddAuthor" width="30" height="30" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M2.5 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M4 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m2-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
+            <path d="M0 4a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v4a.5.5 0 0 1-1 0V7H1v5a1 1 0 0 0 1 1h5.5a.5.5 0 0 1 0 1H2a2 2 0 0 1-2-2zm1 2h13V4a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z" />
+            <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-3.5-2a.5.5 0 0 0-.5.5v1h-1a.5.5 0 0 0 0 1h1v1a.5.5 0 0 0 1 0v-1h1a.5.5 0 0 0 0-1h-1v-1a.5.5 0 0 0-.5-.5" />
+        </svg>
+    </div>
+    <div class="containerSearch" style=" width: 25%;">
+        <select class="form-select-sm " @onchange="OnSlSearchAddChange">
+            <option class="btn-outline-secondary" value="Id" selected>Código</option>
+            <option value="Name">Nombre</option>
+            <option value="Age">Edad</option>
+            <option value="Biography">Biografía</option>
+           
+        </select>
+        <input class="form-control" @oninput="SearchAuthor" type="text" name="name" style="width:70%" placeholder="Buscar por..." title="Todos(*)" />
+    </div>
+</div>
+
+<div class="shadow bg-body-tertiary rounded" style="margin:5%;margin-top:2%">
+    <div class="container-fluid form-control" style="padding-bottom:30px !important;">
+        <div class="pagination align-items-center">
+            <button class="btn page-link" @onclick="GoToPreviousPage" disabled="@(!HasPreviousPage)">Anterior</button>
+            <span style="color:gray ;margin-left:5px;margin-right:5px;"> Página @currentPage de @totalPages </span>
+            <button class="btn page-link " @onclick="GoToNextPage" disabled="@(!HasNextPage)">Siguiente</button>
+            <div class="containerSearch align-items-center" style=" width: 17%;">
+                <label style="margin-right:2%">Tarjetas por página</label>
+                <input class="form-control" @bind="@pageSize" min="1" max="8" type="number" name="name" style="width:20%" />
+            </div>
+        </div>
+
+        <br />
+
+
+        <ComponentGetAuthor Authors="PaginatedAuthors" newAuthor="newAuthorText">
+
+        </ComponentGetAuthor>
+
+
+    </div>
+</div>
+
+<div class="modal fade" id="ModalAddAuthor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@ModalTitle Autor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ComponentAuthor OnSubmit="SaveA" NuevoAutor="newAuthor"  Title="@ModalTitle" Message="@message">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button" @onclick="Cancelar">Cancelar</button>
+                </ComponentAuthor>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Author> AuthorsList = new List<Author>();
+    private int currentPage = 1;
+    private int pageSize = 3;
+    private string ModalTitle = "Agregar";
+    private string MAddSlSearch = "Id";
+    private string MAddtxtSearch = "";
+    private string message = "";
+    private Author newAuthor;
+    public List<Author> newAuthors = new();
+
+    private int totalPages => (int)Math.Ceiling(AuthorsList.Count / (double)pageSize);
+    private bool HasPreviousPage => currentPage > 1;
+    private bool HasNextPage => currentPage < totalPages;
+
+    private List<Author> PaginatedAuthors =>
+        AuthorsList.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+
+
+
+    private async Task newAuthorText(Author Author)
+    {
+        if (Author != null)
+        {
+            newAuthor = Author;
+            ModalTitle = "Actualizar";
+            await JSRuntime.InvokeVoidAsync("openModal");
+        }
+    }
+
+    private async Task SaveA()
+    {
+        // Verificamos si ya existe un libro con el mismo ID
+        var existAuthor = await AuthorRepository.GetAuthorByIdAsync(newAuthor.Author_id);
+
+        if (existAuthor.Author_id == null) // Si no existe, lo agregamos
+        {
+            await AuthorRepository.AddAuthorAsync(newAuthor);
+            Navigation.NavigateTo("/list-author", true); // Navegar al listado de libros
+        }
+        else if (existAuthor.Status_id == 2 && existAuthor.Author_id != null)
+        {
+            existAuthor.Status_id = 1;
+            
+            existAuthor.Name = newAuthor.Name;
+            existAuthor.Age = newAuthor.Age;
+            existAuthor.Biography = newAuthor.Biography;
+            
+
+            await AuthorRepository.UpdateAuthorAsync(existAuthor);
+
+            Navigation.NavigateTo("/list-author", true); // Navegar al listado de libros
+
+        }
+        else if (ModalTitle == "Actualizar")
+        {
+            await AuthorRepository.UpdateAuthorAsync(newAuthor);
+            Navigation.NavigateTo("/list-author", true);
+        }
+        else
+        {
+            // Si el libro ya existe, mostramos un mensaje
+            Console.WriteLine($"El libro con ID {newAuthor.Author_id} ya existe.");
+            message = $"El autor con ID {newAuthor.Author_id} ya existe.";
+
+            
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        newAuthors = (await AuthorRepository.GetAllAsync()).ToList();
+        await LoadAuthors();
+
+
+    }
+    protected override void OnInitialized()
+    {
+
+        newAuthor = new Author(
+        );
+
+    }
+
+    private async Task LoadAuthors()
+    {
+        try
+        {
+            AuthorsList = (await AuthorRepository.GetAllAsync()).ToList();
+            UpdatePagination();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los clientes: {ex.Message}");
+
+        }
+    }
+
+    private async Task SearchAuthor(ChangeEventArgs e)
+    {
+        MAddtxtSearch = e.Value?.ToString() ?? string.Empty;
+        await UpdateAuthorList();
+    }
+
+    private async Task OnSlSearchAddChange(ChangeEventArgs e)
+    {
+        MAddSlSearch = e.Value?.ToString() ?? string.Empty;
+        await UpdateAuthorList();
+    }
+
+    private async Task UpdateAuthorList()
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(MAddtxtSearch))
+            {
+                AuthorsList = (await AuthorRepository.GetAuthorByColumnAndId(MAddtxtSearch, MAddSlSearch)).ToList();
+            }
+            else
+            {
+                await LoadAuthors();
+            }
+            UpdatePagination();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al actualizar la lista de clientes: {ex.Message}");
+        }
+    }
+
+    private void UpdatePagination()
+    {
+        currentPage = 1; // Reset to the first page when the list changes
+    }
+
+    private void GoToPreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+        }
+    }
+
+    private void GoToNextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+        }
+    }
+
+
+
+
+    private void cleanSpaces()
+    {
+        newAuthor = new Author();
+        ModalTitle = "Agregar";
+    }
+
+
+
+
+    private void OnRowDoubleClick(Author item)
+    {
+        try
+        {
+            newAuthor = item;
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error: {e.Message}");
+
+        }
+
+    }
+
+    private void Cancelar()
+    {
+        Navigation.NavigateTo("/list-author");
+    }
+}

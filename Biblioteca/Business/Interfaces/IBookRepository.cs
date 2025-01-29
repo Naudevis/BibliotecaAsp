@@ -9,7 +9,8 @@ namespace Biblioteca.Business.Interfaces
         Task<Book> GetBookByIdAsync(string id);
         Task<Book> AddBookAsync(Book book);
         Task UpdateBookAsync(Book book);
-        Task DeleteBookAsync(string id);
+        Task DeleteBookAsync(Book book);
+        Task<IEnumerable<Book>> GetBookByColumnAndId(string data, string column);
 
     }
 }

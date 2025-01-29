@@ -1,0 +1,76 @@
+﻿@using Biblioteca.Business.Interfaces
+@using Biblioteca.Data.Models
+@inject IJSRuntime JSRuntime
+@inject IAuthorRepository AuthorRepository
+@inject NavigationManager Navigation
+
+
+@if (Authors == null)
+{
+    <p>Cargando autores...</p>
+}
+else if (Authors.Count == 0)
+{
+    <p>No se encontraron autores.</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        @foreach (var author in Authors)
+        {
+            <div class="col">
+                <div class="card ">
+                    <div>
+
+                        <button style="top:4px;right:4px ;position:absolute" @onclick="()=>DelateCliente(author)" title="Eliminar Autor" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="text-center" style="width:100%;margin-top:10px;">
+                        <img style="width:60%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHXb_kmN-as-QCmEqdG9fOAg0VUQpHnrs5xP9gCQ8p7VkaPcuxs5BNG5C6fLwM-6nMXdk&usqp=CAU" alt="...">
+
+                    </div>
+                    <div class="card-body " @ondblclick="() => OnRowDoubleClick(author)">
+                        <h5 class="card-title">@author.Name</h5>
+                        <p class="form-label">Edad: @author.Age</p>
+                        <p class="form-label">Libros: @author.Books.Count</p>
+
+                        <p class="form-label">Biografía: @author.Biography</p>
+
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public List<Author> Authors { get; set; }
+    [Parameter] public RenderFragment ChildBookContent { get; set; }
+
+    [Parameter]
+    public EventCallback<Author> newAuthor { get; set; }
+
+
+    private async Task OnRowDoubleClick(Author item)
+    {
+        try
+        {
+            await newAuthor.InvokeAsync(item);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error: {e.Message}");
+
+        }
+
+    }
+
+    private async Task DelateCliente(Author author)
+    {
+
+        await AuthorRepository.DeleteAuthorAsync(author);
+        Navigation.NavigateTo("/list-author", true);
+
+    }
+}

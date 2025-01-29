@@ -39,7 +39,12 @@ namespace Biblioteca.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Status_id")
+                        .HasColumnType("int");
+
                     b.HasKey("Author_id");
+
+                    b.HasIndex("Status_id");
 
                     b.ToTable("Authors");
                 });
@@ -63,6 +68,9 @@ namespace Biblioteca.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<int>("Status_id")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -71,7 +79,37 @@ namespace Biblioteca.Migrations
 
                     b.HasIndex("Author_id");
 
+                    b.HasIndex("Status_id");
+
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("Biblioteca.Data.Models.Status", b =>
+                {
+                    b.Property<int>("Status_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Status_id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Status_id");
+
+                    b.ToTable("Statuses");
+                });
+
+            modelBuilder.Entity("Biblioteca.Data.Models.Author", b =>
+                {
+                    b.HasOne("Biblioteca.Data.Models.Status", "StatusAuthor")
+                        .WithMany("Authors")
+                        .HasForeignKey("Status_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StatusAuthor");
                 });
 
             modelBuilder.Entity("Biblioteca.Data.Models.Book", b =>
@@ -82,11 +120,26 @@ namespace Biblioteca.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Biblioteca.Data.Models.Status", "Status")
+                        .WithMany("Books")
+                        .HasForeignKey("Status_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Author");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Biblioteca.Data.Models.Author", b =>
                 {
+                    b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("Biblioteca.Data.Models.Status", b =>
+                {
+                    b.Navigation("Authors");
+
                     b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
