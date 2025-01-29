@@ -9,11 +9,11 @@
 
 <div class="containerHead container-fluid shadow-sm p-3 mb-5 bg-body-tertiary rounded">
     <h3 style="padding-left:20px;">Autores</h3>
-    <div title="Agregar tarea">
-        <svg style="color:#4C60EB;" class="bi bi-window-plus iconAction" @onclick="cleanSpaces" data-bs-toggle="modal" data-bs-target="#ModalAddAuthor" width="30" height="30" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M2.5 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M4 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m2-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
-            <path d="M0 4a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v4a.5.5 0 0 1-1 0V7H1v5a1 1 0 0 0 1 1h5.5a.5.5 0 0 1 0 1H2a2 2 0 0 1-2-2zm1 2h13V4a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z" />
-            <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-3.5-2a.5.5 0 0 0-.5.5v1h-1a.5.5 0 0 0 0 1h1v1a.5.5 0 0 0 1 0v-1h1a.5.5 0 0 0 0-1h-1v-1a.5.5 0 0 0-.5-.5" />
+    <div title="Agregar Autor">
+
+        <svg style="color:#4C60EB;" @onclick="cleanSpaces" xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal" data-bs-target="#ModalAddAuthor" width="30" height="30" fill="currentColor" class="bi bi-person-add iconAction" viewBox="0 0 16 16">
+            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
         </svg>
     </div>
     <div class="containerSearch" style=" width: 25%;">
@@ -93,7 +93,7 @@
         {
             newAuthor = Author;
             ModalTitle = "Actualizar";
-            await JSRuntime.InvokeVoidAsync("openModal");
+            await JSRuntime.InvokeVoidAsync("openModalAuthor");
         }
     }
 
