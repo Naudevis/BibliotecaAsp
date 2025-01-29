@@ -57,35 +57,18 @@ namespace Biblioteca.Business.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Book>> GetBookByColumnAndId(string data, string column)
+        public async Task<IEnumerable<Book>> SearchBooks(string data)
         {
             IQueryable<Book> query = _context.Books.AsQueryable();
+            query = query.Include(b => b.Author).Include(s => s.Status).Where(p =>
+            p.Id_Book.Contains(data)||
+            p.Pages.Contains(data) ||
+            p.Price.ToString().Contains(data) ||
+            p.Author.Name.Contains(data) ||
+            p.Title.Contains(data) && 
+            p.Status_id != 2); // Filtra por código
 
-            switch (column)
-            {
-                case "Id":
-                    query = query.Include(b => b.Author).Include(s => s.Status).Where(p => p.Id_Book.Contains(data) && p.Status_id!=2); // Filtra por código
-                    break;
-
-                case "Page":
-                    query = query.Include(b => b.Author).Include(s => s.Status).Where(p => p.Pages.Contains(data) && p.Status_id != 2); // Filtra por tipo de institución
-                    break;
-
-                case "Price":
-                    query = query.Include(b => b.Author).Include(s => s.Status).Where(p => p.Price.ToString().Contains(data) && p.Status_id != 2); // Filtra por nombre de institución
-                    break;
-                case "AuthorName":
-                    query = query.Include(b => b.Author).Include(s => s.Status).Where(p => p.Author.Name.Contains(data) && p.Status_id != 2); // Filtra por tipo de institución
-                    break;
-
-                case "Title":
-                    query = query.Include(b => b.Author).Include(s => s.Status).Where(p => p.Title.Contains(data) && p.Status_id != 2); // Filtra por nombre de institución
-                    break;
-
-                default:
-                    // Si no se corresponde con ninguno de los casos, no se aplica ningún filtro.
-                    break;
-            }
+           
             return await query.ToListAsync(); // Ejecuta la consulta y retorna el resultado
 
         }

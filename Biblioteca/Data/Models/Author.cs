@@ -6,7 +6,8 @@ namespace Biblioteca.Data.Models
     {
         [Key]
         [Required(ErrorMessage ="La cédula es requerida")]
-        [Length(9,15,ErrorMessage ="El número de cedula debe de ir estre 9 y 15")]
+
+        [Length(9,12,ErrorMessage ="El número de cedula debe de ir estre 9 y 15")]
         public string Author_id { get; set; }
 
         [Required(ErrorMessage = "El nombre es requerida")]

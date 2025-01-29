@@ -9,6 +9,6 @@ namespace Biblioteca.Business.Interfaces
         Task<Author> AddAuthorAsync(Author author);
         Task UpdateAuthorAsync(Author author);
         Task DeleteAuthorAsync(Author author);
-        Task<IEnumerable<Author>> GetAuthorByColumnAndId(string data, string column);
+        Task<IEnumerable<Author>> FindAuthors(string data);
     }
 }

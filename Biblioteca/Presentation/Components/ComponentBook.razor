@@ -25,34 +25,34 @@
         <div>
 
             <label> Código Libro </label>
-            <InputText @bind-Value="NuevoLibro.Id_Book" class="form-control" />
+            <InputText @bind-Value="NuevoLibro.Id_Book" class="form-control" placeholder="El código debe ser de 13 digitos " />
 
         </div>
     }
-    
+
 
     <div>
 
         <label> Título del Libro </label>
-        <InputText  @bind-Value="NuevoLibro.Title" class="form-control"/>
+        <InputText @bind-Value="NuevoLibro.Title" class="form-control" placeholder="Introduce al menos 3 caracteres" />
 
     </div>
     <div>
 
         <label> Páginas </label>
-        <InputText @bind-Value="NuevoLibro.Pages" class="form-control" />
+        <InputText @bind-Value="NuevoLibro.Pages" class="form-control" placeholder="Introduce el número de páginas" />
 
     </div>
     <div>
 
         <label> Precio </label>
-        <InputNumber @bind-Value="NuevoLibro.Price" class="form-control" />
+        <InputNumber @bind-Value="NuevoLibro.Price" class="form-control" placeholder="El precio debe de estar entre 500 a 10000 colones " />
 
     </div>
     <div>
 
         <label> Fecha de Edición </label>
-        <InputDate @bind-Value="NuevoLibro.EditionDate" class="form-control" />
+        <InputDate @bind-Value="NuevoLibro.EditionDate" class="form-control" placeholder="Introduce la fecha de edición" />
 
     </div>
     <div>
@@ -78,14 +78,14 @@
 </EditForm>
 
 @code {
-   [Parameter]
-     public Book NuevoLibro  { get; set; }
-   [Parameter] public List<Author> Authors  {get;set;}
-   [Parameter] public string Title  {get;set;}
-   [Parameter] public string Message  {get;set;}
+    [Parameter]
+    public Book NuevoLibro  { get; set; }
+    [Parameter] public List<Author> Authors  {get;set;}
+    [Parameter] public string Title  {get;set;}
+    [Parameter] public string Message  {get;set;}
 
     [Parameter] public EventCallback OnSubmit { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
- 
-   
+
+
 }

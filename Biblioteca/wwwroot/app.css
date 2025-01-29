@@ -98,9 +98,10 @@ h1:focus {
 
 .containerSearch {
     display: flex;
-    right: 5%;
-    width: 30%;
-    position: absolute
+    right: 40px;
+    width: 50%;
+    position: absolute;
+    justify-content: end;
 }
 
 .containerMessageBody {

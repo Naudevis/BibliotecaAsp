@@ -65,31 +65,18 @@ namespace Biblioteca.Business.Repositories
 
 
 
-        public async Task<IEnumerable<Author>> GetAuthorByColumnAndId(string data, string column)
+        public async Task<IEnumerable<Author>> FindAuthors(string data)
         {
             IQueryable<Author> query = _context.Authors.AsQueryable();
+            query = query.Include(b => b.Books).Include(s => s.StatusAuthor).Where(p => 
+            p.Author_id.Contains(data) ||
+             p.Name.Contains(data) ||
+              p.Age.Contains(data) ||
+               p.Books.Count.ToString().Contains(data) ||
+               p.Biography.Contains(data) 
+            && p.Status_id != 2).OrderBy(p=>p.Name); // Filtra por código
 
-            switch (column)
-            {
-                case "Id":
-                    query = query.Include(b=>b.Books).Include(s => s.StatusAuthor).Where(p => p.Author_id.Contains(data) && p.Status_id != 2); // Filtra por código
-                    break;
-
-                case "Name":
-                    query = query.Include(b => b.Books).Include(s => s.StatusAuthor).Where(p => p.Name.Contains(data) && p.Status_id != 2); // Filtra por tipo de institución
-                    break;
-
-                case "Age":
-                    query = query.Include(b => b.Books).Include(s => s.StatusAuthor).Where(p => p.Age.Contains(data) && p.Status_id != 2); // Filtra por nombre de institución
-                    break;
-                case "Biography":
-                    query = query.Include(b => b.Books).Include(s => s.StatusAuthor).Where(p => p.Biography.Contains(data) && p.Status_id != 2); // Filtra por tipo de institución
-                    break;
-
-                default:
-                    // Si no se corresponde con ninguno de los casos, no se aplica ningún filtro.
-                    break;
-            }
+           
             return await query.ToListAsync(); // Ejecuta la consulta y retorna el resultado
 
         }

@@ -11,7 +11,8 @@ namespace Biblioteca.Data.Models
     {
         [Key]
         [Required(ErrorMessage ="El código es requerido")]
-        [Length(7,7,ErrorMessage ="El código debe de ser de 7 dígitos")]
+        [Length(13,13,ErrorMessage ="El código debe de ser de 13 dígitos")]
+        
         public string Id_Book { get; set; }
 
         [Required(ErrorMessage ="El Título es requerido")]
@@ -34,5 +35,9 @@ namespace Biblioteca.Data.Models
         public Status Status { get; set; }
 
 
+        //Hacer dos reportes
+        //Agregar cantidad de libros
+        //Reporte por fecha
+        //Reportes de Un autor.Que libros tiene pablo
     }
 }

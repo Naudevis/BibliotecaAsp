@@ -28,7 +28,7 @@ else
                         <img style="width:60%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHXb_kmN-as-QCmEqdG9fOAg0VUQpHnrs5xP9gCQ8p7VkaPcuxs5BNG5C6fLwM-6nMXdk&usqp=CAU" alt="...">
 
                     </div>
-                    <div class="card-body " @ondblclick="() => OnRowDoubleClick(author)">
+                    <div class="card-body " title="Doble clic para editar" @ondblclick="() => OnRowDoubleClick(author)">
                         <h5 class="card-title">@author.Name</h5>
                         <p class="form-label">Edad: @author.Age</p>
                         <p class="form-label">Libros: @author.Books.Count</p>

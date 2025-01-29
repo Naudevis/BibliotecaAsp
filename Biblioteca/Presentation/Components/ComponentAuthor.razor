@@ -17,7 +17,7 @@
         <div>
 
             <label> Cédula </label>
-            <InputText @bind-Value="NuevoAutor.Author_id" class="form-control" disabled />
+            <InputText @bind-Value="NuevoAutor.Author_id" class="form-control"  disabled />
 
         </div>
     }
@@ -26,7 +26,7 @@
         <div>
 
             <label> Cédula </label>
-            <InputText @bind-Value="NuevoAutor.Author_id" class="form-control" />
+            <InputText @bind-Value="NuevoAutor.Author_id" placeholder="Introduce entre 9 y 12 dígitos" class="form-control" />
 
         </div>
     }
@@ -35,19 +35,19 @@
     <div>
 
         <label> Nombre </label>
-        <InputText @bind-Value="NuevoAutor.Name" class="form-control" />
+        <InputText @bind-Value="NuevoAutor.Name" placeholder="Introduce al menos 3 caracteres" class="form-control" />
 
     </div>
     <div>
 
         <label> Edad </label>
-        <InputText @bind-Value="NuevoAutor.Age" class="form-control" />
+        <InputText @bind-Value="NuevoAutor.Age" class="form-control" placeholder="Edad entre 0 y 150 años" />
 
     </div>
     <div>
 
         <label> Biografía </label>
-        <InputText @bind-Value="NuevoAutor.Biography" class="form-control" />
+        <InputText @bind-Value="NuevoAutor.Biography" class="form-control" placeholder="Escribe al menos 15 caracteres" />
 
     </div>
    
