@@ -2,21 +2,32 @@
 
 using Biblioteca.Presentation.Components;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
+using System.Timers;
 
 namespace Biblioteca.Data.Models
 {
     public class Book
     {
         [Key]
+        [Required(ErrorMessage ="El código es requerido")]
+        [Length(7,7,ErrorMessage ="El código debe de ser de 7 dígitos")]
         public string Id_Book { get; set; }
-        public string Title { get; set; }
-        public string Pages { get; set; }
-        public double Price { get; set; }
-        public DateTime EditionDate { get; set; }
-     
 
+        [Required(ErrorMessage ="El Título es requerido")]
+        [MinLength(3,ErrorMessage ="El Titulo debe de ser mayor a 2 dígitos")]
+        public string Title { get; set; }
+        [Required(ErrorMessage ="La cantidad de páginas son requeridas")]
+        public string Pages { get; set; }
+        [Required(ErrorMessage ="El precio del libro es requerido")]
+        [Range(500,10000,ErrorMessage ="El precio del libro debe de estar entre 500 a 10000 colones")]
+        public double Price { get; set; }
+        [Required(ErrorMessage ="La fecha de edición es requerida")]
+        
+        public DateTime EditionDate { get; set; }
 
         //Relación con el Author
+        [Required(ErrorMessage ="El autor es requerido")]
         public string Author_id { get; set; }
         public Author Author { get; set; }
         public int Status_id { get; set; }
