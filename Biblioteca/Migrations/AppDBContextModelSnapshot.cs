@@ -71,6 +71,9 @@ namespace Biblioteca.Migrations
                     b.Property<int>("Status_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

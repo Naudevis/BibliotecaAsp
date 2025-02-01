@@ -8,24 +8,24 @@
 @using Biblioteca.Data.Models
 @inject NavigationManager Navigation
 
-<EditForm Model="NuevoLibro" OnValidSubmit="OnSubmit">
+<EditForm Model="BookP" OnValidSubmit="OnMBookSubmit">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
 
 
-    <p style="color:red">@Message</p>
-    @if (Title=="Actualizar"){
+    <p style="color:red">@MessageP</p>
+    @if (TitleP=="Actualizar"){
         <div>
 
             <label> Código Libro </label>
-            <InputText @bind-Value="NuevoLibro.Id_Book" class="form-control" disabled/>
+            <InputText @bind-Value="BookP.Id_Book" class="form-control" disabled/>
 
         </div>
     }else{
         <div>
 
             <label> Código Libro </label>
-            <InputText @bind-Value="NuevoLibro.Id_Book" class="form-control" placeholder="El código debe ser de 13 digitos " />
+            <InputText @bind-Value="BookP.Id_Book" class="form-control" placeholder="El código debe ser de 13 digitos " />
 
         </div>
     }
@@ -34,38 +34,44 @@
     <div>
 
         <label> Título del Libro </label>
-        <InputText @bind-Value="NuevoLibro.Title" class="form-control" placeholder="Introduce al menos 3 caracteres" />
+        <InputText @bind-Value="BookP.Title" class="form-control" placeholder="Introduce al menos 3 caracteres" />
 
     </div>
     <div>
 
         <label> Páginas </label>
-        <InputText @bind-Value="NuevoLibro.Pages" class="form-control" placeholder="Introduce el número de páginas" />
+        <InputText @bind-Value="BookP.Pages" class="form-control" placeholder="Introduce el número de páginas" />
+
+    </div>
+    <div>
+
+        <label> Cantidad de libros </label>
+        <InputNumber @bind-Value="BookP.Stock" class="form-control"  />
 
     </div>
     <div>
 
         <label> Precio </label>
-        <InputNumber @bind-Value="NuevoLibro.Price" class="form-control" placeholder="El precio debe de estar entre 500 a 10000 colones " />
+        <InputNumber @bind-Value="BookP.Price" class="form-control"  />
 
     </div>
     <div>
 
         <label> Fecha de Edición </label>
-        <InputDate @bind-Value="NuevoLibro.EditionDate" class="form-control" placeholder="Introduce la fecha de edición" />
+        <InputDate @bind-Value="BookP.EditionDate" class="form-control" placeholder="Introduce la fecha de edición" />
 
     </div>
     <div>
 
         <label> Autor </label>
-        <select  @bind="NuevoLibro.Author_id" class="form-select">@*?*@
+        <InputSelect  @bind-Value="BookP.Author_id" class="form-select">@*?*@
             <option value="">Seleccione un Autor</option>
 
-            @foreach(var autor in Authors){
+            @foreach(var autor in UploadAuthorlListP){
                 <option value="@autor.Author_id">@autor.Name</option>
 
             }
-        </select>
+        </InputSelect>
 
     </div>
 
@@ -73,18 +79,18 @@
     <div class="modal-footer">
         @ChildContent
 
-        <button type="submit" class="btn btn-success">@Title</button>
+        <button type="submit" class="btn btn-success">@TitleP</button>
     </div>
 </EditForm>
 
 @code {
     [Parameter]
-    public Book NuevoLibro  { get; set; }
-    [Parameter] public List<Author> Authors  {get;set;}
-    [Parameter] public string Title  {get;set;}
-    [Parameter] public string Message  {get;set;}
+    public Book BookP  { get; set; }
+    [Parameter] public List<Author> UploadAuthorlListP  {get;set;}
+    [Parameter] public string TitleP  {get;set;}
+    [Parameter] public string MessageP  {get;set;}
 
-    [Parameter] public EventCallback OnSubmit { get; set; }
+    [Parameter] public EventCallback OnMBookSubmit { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 
 

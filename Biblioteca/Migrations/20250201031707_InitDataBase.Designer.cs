@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Biblioteca.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20250129080849_Initial")]
-    partial class Initial
+    [Migration("20250201031707_InitDataBase")]
+    partial class InitDataBase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,6 +72,9 @@ namespace Biblioteca.Migrations
                         .HasColumnType("float");
 
                     b.Property<int>("Status_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stock")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")

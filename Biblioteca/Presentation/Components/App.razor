@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
@@ -29,7 +29,24 @@
             var modal = new bootstrap.Modal(modalElement);
             modal.show(); // Abre el modal
         };
-    </script>}
+
+
+
+          window.blazorDownloadFile = (fileName, content) => {
+            // Convertir el contenido de bytes en un Blob
+            const blob = new Blob([content], { type: "application/pdf" });
+
+            // Crear un enlace de descarga
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = fileName;
+            a.click();
+        };
+
+    
+
+
+    </script>
 </body>
 
 </html>

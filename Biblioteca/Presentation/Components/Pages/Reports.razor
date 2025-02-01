@@ -1,0 +1,64 @@
+﻿@page "/bookreport"
+@using Biblioteca.Business.Interfaces
+@using Biblioteca.Data.Models
+
+@inject IBookRepository bookReportService
+@inject IJSRuntime JSRuntime
+
+<h3>Reporte de Libros</h3>
+
+@if (books == null)
+{
+    <p><em>Cargando libros...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Título</th>
+                <th>Stock</th>
+                <th>Autor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books)
+            {
+                <tr>
+                    <td>@book.Id_Book</td>
+                    <td>@book.Title</td>
+                    <td>@book.Stock</td>
+                    <td>@book.Author.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-primary" @onclick="DownloadPdf">Descargar PDF</button>
+}
+
+@code {
+    private List<Book> books= new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Obtener los datos de los libros desde el servicio
+        books = await bookReportService.GetBooksAsync();
+    }
+
+    private async Task DownloadPdf()
+    {
+        var pdfContent = bookReportService.GeneratePdfReport(books);
+
+        // Usar JSInterop para permitir que el cliente descargue el archivo PDF
+        var fileName = "reporte_libros.pdf";
+        var fileContent = new ByteArrayContent(pdfContent);
+
+        // Convertir el contenido del ByteArrayContent a un array de bytes
+        var contentBytes = await fileContent.ReadAsByteArrayAsync();
+
+        // Llamar al JS para descargar el archivo
+        await JSRuntime.InvokeVoidAsync("blazorDownloadFile", fileName, contentBytes);
+    }
+}

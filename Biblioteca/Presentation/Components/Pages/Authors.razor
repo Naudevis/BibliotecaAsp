@@ -13,7 +13,7 @@
         <h3 style="padding-left:20px;">Autores</h3>
         <div title="Agregar Autor">
 
-            <svg style="color:#4C60EB;" @onclick="cleanSpaces" xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal" data-bs-target="#ModalAddAuthor" width="30" height="30" fill="currentColor" class="bi bi-person-add iconAction" viewBox="0 0 16 16">
+            <svg style="color:#4C60EB;" @onclick="CleanAuthorSpaces" xmlns="http://www.w3.org/2000/svg" data-bs-toggle="modal" data-bs-target="#ModalAddAuthor" width="30" height="30" fill="currentColor" class="bi bi-person-add iconAction" viewBox="0 0 16 16">
                 <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
                 <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
             </svg>
@@ -27,7 +27,7 @@
       
 
 
-        <ComponentGetAuthor Authors="PaginatedAuthors" newAuthor="newAuthorText">
+        <ComponentGetAuthor AuthorListP="PaginatedAuthors" AuthorPG="UploadAuthorPToUpdate" RemoveAuthorPG="UploadAuthorPToDelete">
 
         </ComponentGetAuthor>
         <br/>
@@ -48,6 +48,8 @@
     </div>
 </div>
 
+
+@*Modal para Agregar y actualizar un Author*@
 <div class="modal fade" id="ModalAddAuthor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -56,9 +58,29 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <ComponentAuthor OnSubmit="SaveA" NuevoAutor="newAuthor"  Title="@ModalTitle" Message="@message">
+                <ComponentAuthor OnMAuthorSubmit="SaveAuthor" AuthorP="newAuthor" TitleP="@ModalTitle" MessageP="@ErrorMessageAuthor">
                     <button class="btn btn-secondary" data-bs-dismiss="modal" type="button" @onclick="Cancelar">Cancelar</button>
                 </ComponentAuthor>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*Modal para Eliminar un Author*@
+<div class="modal fade" id="MRemoveAuthorPG" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="top:20%;">
+        <div class="modal-content">
+            <div class="modal-header  ">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Eliminar</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label>¿Quieres eliminar al autor @newAuthor.Name?</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" @onclick="()=>DeleteAuthor()">Eliminar</button>
             </div>
         </div>
     </div>
@@ -67,11 +89,11 @@
 @code {
     private List<Author> AuthorsList = new List<Author>();
     private int currentPage = 1;
-    private int pageSize = 3;
+    private int pageSize = 4;
     private string ModalTitle = "Agregar";
-    private string MAddSlSearch = "Id";
+
     private string MAddtxtSearch = "";
-    private string message = "";
+    private string ErrorMessageAuthor = "";
     private Author newAuthor;
     public List<Author> newAuthors = new();
 
@@ -82,27 +104,35 @@
     private List<Author> PaginatedAuthors =>
         AuthorsList.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
 
+    //Cuando carga la página
 
-
-    private async Task newAuthorText(Author Author)
+    protected override async Task OnInitializedAsync()
     {
-        if (Author != null)
-        {
-            newAuthor = Author;
-            ModalTitle = "Actualizar";
-            await JSRuntime.InvokeVoidAsync("openModalAuthor");
-        }
+        newAuthors = (await AuthorRepository.GetAllAsync()).ToList();
+        await LoadAuthors();
+
+
+    }
+    protected override void OnInitialized()
+    {
+
+        newAuthor = new Author();
+
     }
 
-    private async Task SaveA()
+
+
+
+    //Guardar y actualizar
+
+    private async Task SaveAuthor()
     {
-        // Verificamos si ya existe un libro con el mismo ID
         var existAuthor = await AuthorRepository.GetAuthorByIdAsync(newAuthor.Author_id);
 
-        if (existAuthor.Author_id == null) // Si no existe, lo agregamos
+        if (existAuthor.Author_id == null) 
         {
             await AuthorRepository.AddAuthorAsync(newAuthor);
-            Navigation.NavigateTo("/list-author", true); // Navegar al listado de libros
+            Navigation.NavigateTo("/list-author", true);
         }
         else if (existAuthor.Status_id == 2 && existAuthor.Author_id != null)
         {
@@ -115,7 +145,7 @@
 
             await AuthorRepository.UpdateAuthorAsync(existAuthor);
 
-            Navigation.NavigateTo("/list-author", true); // Navegar al listado de libros
+            Navigation.NavigateTo("/list-author", true); 
 
         }
         else if (ModalTitle == "Actualizar")
@@ -125,44 +155,66 @@
         }
         else
         {
-            // Si el libro ya existe, mostramos un mensaje
-            Console.WriteLine($"El libro con ID {newAuthor.Author_id} ya existe.");
-            message = $"El autor con ID {newAuthor.Author_id} ya existe.";
+            Console.WriteLine($"El autor con ID {newAuthor.Author_id} ya existe.");
+            ErrorMessageAuthor = $"El autor con ID {newAuthor.Author_id} ya existe.";
 
             
         }
     }
-
-
-    protected override async Task OnInitializedAsync()
+    private void CleanAuthorSpaces()
     {
-        newAuthors = (await AuthorRepository.GetAllAsync()).ToList();
-        await LoadAuthors();
-
-
+        newAuthor = new Author();
+        ModalTitle = "Agregar";
+        ErrorMessageAuthor = "";
     }
-    protected override void OnInitialized()
-    {
 
-        newAuthor = new Author(
-        );
+
+
+    private void Cancelar()
+    {
+        Navigation.NavigateTo("/list-author");
 
     }
 
-    private async Task LoadAuthors()
+
+
+
+
+    //Actualizar
+
+    private async Task UploadAuthorPToUpdate(Author Author)
     {
-        try
+        if (Author != null)
         {
-            AuthorsList = (await AuthorRepository.GetAllAsync()).ToList();
-            UpdatePagination();
+            newAuthor = Author;
+            ModalTitle = "Actualizar";
+            ErrorMessageAuthor = "";
+            await JSRuntime.InvokeVoidAsync("openModalAuthor");
         }
-        catch (Exception ex)
+    }
+    //Eliminar
+
+    private async Task UploadAuthorPToDelete(Author Author)
+    {
+        if (Author != null)
         {
-            Console.WriteLine($"Error al cargar los clientes: {ex.Message}");
+            newAuthor = Author;
 
         }
     }
 
+
+
+    private async Task DeleteAuthor()
+    {
+
+        await AuthorRepository.DeleteAuthorAsync(newAuthor);
+        Navigation.NavigateTo("/list-author", true);
+
+    }
+
+
+    //Buscar
     private async Task SearchAuthor(ChangeEventArgs e)
     {
         MAddtxtSearch = e.Value?.ToString() ?? string.Empty;
@@ -191,6 +243,21 @@
         }
     }
 
+    private async Task LoadAuthors()
+    {
+        try
+        {
+            AuthorsList = (await AuthorRepository.GetAllAsync()).ToList();
+            UpdatePagination();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los clientes: {ex.Message}");
+
+        }
+    }
+
+    //Paginación
     private void UpdatePagination()
     {
         currentPage = 1; // Reset to the first page when the list changes
@@ -213,34 +280,20 @@
     }
 
 
+    //otros
 
+    // private void OnRowDoubleClick(Author item)
+    // {
+    //     try
+    //     {
+    //         newAuthor = item;
 
-    private void cleanSpaces()
-    {
-        newAuthor = new Author();
-        ModalTitle = "Agregar";
-    }
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         Console.WriteLine($"Error: {e.Message}");
 
+    //     }
 
-
-
-    private void OnRowDoubleClick(Author item)
-    {
-        try
-        {
-            newAuthor = item;
-
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Error: {e.Message}");
-
-        }
-
-    }
-
-    private void Cancelar()
-    {
-        Navigation.NavigateTo("/list-author");
-    }
+    // }
 }

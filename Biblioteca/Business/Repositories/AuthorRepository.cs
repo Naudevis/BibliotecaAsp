@@ -41,7 +41,7 @@ namespace Biblioteca.Business.Repositories
 
         public async Task<IEnumerable<Author>> GetAllAsync()
         {
-          return  await _context.Authors.Include(b=>b.Books).Include(s =>s.StatusAuthor).Where(s => s.Status_id == 1).ToListAsync();
+          return  await _context.Authors.Include(b=>b.Books).Include(s =>s.StatusAuthor).Where(s => s.Status_id == 1).OrderBy(a =>a.Name).Take(4).ToListAsync();
         }
 
         public async Task<Author> GetAuthorByIdAsync(string Author_id)
@@ -67,6 +67,11 @@ namespace Biblioteca.Business.Repositories
 
         public async Task<IEnumerable<Author>> FindAuthors(string data)
         {
+
+            if (data == "*")
+            {
+                return await _context.Authors.Include(b => b.Books).Include(s => s.StatusAuthor).Where(s => s.Status_id == 1).OrderBy(a => a.Name).ToListAsync();
+            }
             IQueryable<Author> query = _context.Authors.AsQueryable();
             query = query.Include(b => b.Books).Include(s => s.StatusAuthor).Where(p => 
             p.Author_id.Contains(data) ||
@@ -74,7 +79,7 @@ namespace Biblioteca.Business.Repositories
               p.Age.Contains(data) ||
                p.Books.Count.ToString().Contains(data) ||
                p.Biography.Contains(data) 
-            && p.Status_id != 2).OrderBy(p=>p.Name); // Filtra por código
+            && p.Status_id != 2).OrderBy(p=>p.Name).Take(4); // Filtra por código
 
            
             return await query.ToListAsync(); // Ejecuta la consulta y retorna el resultado

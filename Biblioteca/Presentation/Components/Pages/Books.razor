@@ -16,7 +16,7 @@
         <h3 style="padding-left:20px;">Libros</h3>
         <div title="Agregar Libro">
 
-            <svg xmlns="http://www.w3.org/2000/svg" style="color:#4C60EB;" data-bs-toggle="modal" data-bs-target="#ModalAddBook" @onclick="cleanSpaces" width="30" height="30" fill="currentColor" class="bi bi-journal-plus iconAction" viewBox="0 0 16 16">
+            <svg xmlns="http://www.w3.org/2000/svg" style="color:#4C60EB;" data-bs-toggle="modal" data-bs-target="#ModalAddBook" @onclick="CleanBookSpaces" width="30" height="30" fill="currentColor" class="bi bi-journal-plus iconAction" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5" />
                 <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2" />
                 <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z" />
@@ -30,14 +30,14 @@
 
 
     <div class="container-fluid form-control" style="padding-top:30px !important;">
- 
-
-        <ComponentGetBooks Books="PaginatedBooks" newBook="newBookText">
-
-      </ComponentGetBooks>
 
 
-    
+        <ComponentGetBooks BookListPG="PaginatedBooks" RemoveBookPG="UploadAuthorPToDelete" BookPG="UploadBookPToUpdate">
+
+        </ComponentGetBooks>
+
+
+
         <br />
         <div class="pagination align-items-center justify-content-center">
 
@@ -51,10 +51,12 @@
             </div>
 
         </div>
-
+        <br />
     </div>
 </div>
 
+
+@*Modal para agregar y actualizar*@
 <div class="modal fade" id="ModalAddBook" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -63,9 +65,29 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <ComponentBook OnSubmit="SaveR" Authors="newAuthors" NuevoLibro="newBook" Title="@ModalTitle" Message="@message">
+                <ComponentBook OnMBookSubmit="SaveBook" UploadAuthorlListP="newAuthors" BookP="newBook" TitleP="@ModalTitle" MessageP="@ErrorMessageBook">
                     <button class="btn btn-secondary" data-bs-dismiss="modal" type="button" @onclick="Cancelar">Cancelar</button>
                 </ComponentBook>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Modal para eliminar*@
+
+<div class="modal fade" id="MRemoveBookPG" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="top:20%;">
+        <div class="modal-content">
+            <div class="modal-header  ">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Eliminar</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label>¿Quieres eliminar el libro: @newBook.Title?</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" @onclick="()=>DeleteBook()">Eliminar</button>
             </div>
         </div>
     </div>
@@ -74,11 +96,11 @@
 @code {
     private List<Book> BooksList = new List<Book>();
     private int currentPage = 1;
-    private int pageSize = 3;
+    private int pageSize = 4;
     private string ModalTitle = "Agregar";
-    private string MAddSlSearch = "Id";
+
     private string MAddtxtSearch = "";
-    private string message = "";
+    private string ErrorMessageBook = "";
     private Book newBook;
     public List<Author> newAuthors = new();
 
@@ -90,18 +112,26 @@
         BooksList.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
 
 
-
-    private async Task newBookText(Book Book)
+    //Cuando carga la página
+    protected override async Task OnInitializedAsync()
     {
-        if (Book != null)
-        {
-            newBook = Book;
-            ModalTitle = "Actualizar";
-            await JSRuntime.InvokeVoidAsync("openModalBook");
-        }
+        newAuthors = (await AuthorRepository.GetAllAsync()).ToList();
+        await LoadBooks();
+
+
+    }
+    protected override void OnInitialized()
+    {
+
+        newBook = new Book(
+        );
+
     }
 
-    private async Task SaveR()
+
+
+    //Guardar y actualizar
+    private async Task SaveBook()
     {
         // Verificamos si ya existe un libro con el mismo ID
         var existBook = await BookRepository.GetBookByIdAsync(newBook.Id_Book);
@@ -117,6 +147,7 @@
             existBook.Author_id = newBook.Author_id;
             existBook.EditionDate = newBook.EditionDate;
             existBook.Price = newBook.Price;
+            existBook.Stock = newBook.Stock;
             existBook.Pages = newBook.Pages;
             existBook.Title = newBook.Title;
 
@@ -132,41 +163,58 @@
         {
             // Si el libro ya existe, mostramos un mensaje
             Console.WriteLine($"El libro con ID {newBook.Id_Book} ya existe.");
-            message=$"El libro con ID {newBook.Id_Book} ya existe.";
+            ErrorMessageBook=$"El libro con ID {newBook.Id_Book} ya existe.";
 
-      
+
         }
     }
-
-
-    protected override async Task OnInitializedAsync()
+    private void CleanBookSpaces()
     {
-        newAuthors = (await AuthorRepository.GetAllAsync()).ToList();
-        await LoadBooks();
-        
-
+        newBook = new Book();
+        ModalTitle = "Agregar";
+        newBook.EditionDate = DateTime.Now;
+        ErrorMessageBook = "";
     }
-    protected override void OnInitialized()
+    private void Cancelar()
     {
-
-        newBook = new Book(
-        );
-
+        Navigation.NavigateTo("/list-book");
     }
 
-    private async Task LoadBooks()
+
+
+
+    //Actualizar
+    private async Task UploadBookPToUpdate(Book Book)
     {
-        try
+        if (Book != null)
         {
-            BooksList = (await BookRepository.GetAllAsync()).ToList();
-            UpdatePagination();
+            newBook = Book;
+            ModalTitle = "Actualizar";
+            ErrorMessageBook = "";
+            await JSRuntime.InvokeVoidAsync("openModalBook");
         }
-        catch (Exception ex)
+    }
+
+    //Eliminar
+    private async Task UploadAuthorPToDelete(Book book)
+    {
+        if (book != null)
         {
-            Console.WriteLine($"Error al cargar los clientes: {ex.Message}");
+            newBook = book;
 
         }
     }
+    private async Task DeleteBook()
+    {
+
+
+        await BookRepository.DeleteBookAsync(newBook);
+        Navigation.NavigateTo("/list-Book", true);
+
+
+    }
+
+    //Buscar y paginación
 
     private async Task SearchBook(ChangeEventArgs e)
     {
@@ -196,9 +244,24 @@
         }
     }
 
+    private async Task LoadBooks()
+    {
+        try
+        {
+            BooksList = (await BookRepository.GetAllAsync()).ToList();
+            UpdatePagination();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los clientes: {ex.Message}");
+
+        }
+    }
+
+
     private void UpdatePagination()
     {
-        currentPage = 1; // Reset to the first page when the list changes
+        currentPage = 1; 
     }
 
     private void GoToPreviousPage()
@@ -220,33 +283,20 @@
 
 
 
-    private void cleanSpaces()
-    {
-        newBook = new Book();
-        ModalTitle = "Agregar";
-        newBook.EditionDate = DateTime.Now;
-    }
+    //Otros
 
-
-
-
-    private void OnRowDoubleClick(Book item)
-    {
-        try
+    /*    private void OnRowDoubleClick(Book item)
         {
-            newBook = item;
+        try
+            {
+                newBook = item;
 
         }
         catch (Exception e)
-        {
+            {
             Console.WriteLine($"Error: {e.Message}");
 
-        }
+            }
 
-    }
-
-    private void Cancelar()
-    {
-        Navigation.NavigateTo("/list-book");
-    }
+    }*/
 }

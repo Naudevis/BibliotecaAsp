@@ -5,24 +5,30 @@
 @inject NavigationManager Navigation
 
 
-@if (Authors == null)
+@if (AuthorListP == null)
 {
-    <p>Cargando autores...</p>
+    <div class="container-fluid align-content-center justify-content-center" >
+        <h3>Cargando autores...</h3>
+    </div>
+    
 }
-else if (Authors.Count == 0)
+else if (AuthorListP.Count == 0)
 {
-    <p>No se encontraron autores.</p>
+    <div class="container-fluid align-items-center justify-content-center d-flex  " style="min-height:400px;" >
+        <h3>No se encontraron autores.</h3>
+    </div>
+  
 }
 else
 {
     <div class="row row-cols-1 row-cols-md-4 g-4">
-        @foreach (var author in Authors)
+        @foreach (var author in AuthorListP)
         {
             <div class="col">
                 <div class="card ">
                     <div>
 
-                        <button style="top:4px;right:4px ;position:absolute" @onclick="()=>DelateCliente(author)" title="Eliminar Autor" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button style="top:4px;right:4px ;position:absolute" @onclick="()=>TakeAuthorToDelete(author)" data-bs-toggle="modal" data-bs-target="#MRemoveAuthorPG" title="Eliminar Autor" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="text-center" style="width:100%;margin-top:10px;">
                         <img style="width:60%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHXb_kmN-as-QCmEqdG9fOAg0VUQpHnrs5xP9gCQ8p7VkaPcuxs5BNG5C6fLwM-6nMXdk&usqp=CAU" alt="...">
@@ -44,18 +50,20 @@ else
 }
 
 @code {
-    [Parameter] public List<Author> Authors { get; set; }
+    [Parameter] public List<Author> AuthorListP { get; set; }
     [Parameter] public RenderFragment ChildBookContent { get; set; }
 
     [Parameter]
-    public EventCallback<Author> newAuthor { get; set; }
+    public EventCallback<Author> AuthorPG { get; set; }
+    [Parameter]
 
+    public EventCallback<Author> RemoveAuthorPG { get; set; }
 
-    private async Task OnRowDoubleClick(Author item)
+    private async Task OnRowDoubleClick(Author author)
     {
         try
         {
-            await newAuthor.InvokeAsync(item);
+            await AuthorPG.InvokeAsync(author);
 
         }
         catch (Exception e)
@@ -66,11 +74,19 @@ else
 
     }
 
-    private async Task DelateCliente(Author author)
+    private async Task TakeAuthorToDelete(Author author)
     {
 
-        await AuthorRepository.DeleteAuthorAsync(author);
-        Navigation.NavigateTo("/list-author", true);
+        try
+        {
+            await RemoveAuthorPG.InvokeAsync(author);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error: {e.Message}");
+
+        }
 
     }
 }

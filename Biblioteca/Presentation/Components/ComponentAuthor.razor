@@ -6,18 +6,18 @@
 @using Biblioteca.Data.Models
 @inject NavigationManager Navigation
 
-<EditForm Model="NuevoAutor" OnValidSubmit="OnSubmit">
+<EditForm Model="AuthorP" OnValidSubmit="OnMAuthorSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
 
-    <p style="color:red">@Message</p>
-    @if (Title == "Actualizar")
+    <p style="color:red">@MessageP</p>
+    @if (TitleP == "Actualizar")
     {
         <div>
 
             <label> Cédula </label>
-            <InputText @bind-Value="NuevoAutor.Author_id" class="form-control"  disabled />
+            <InputText @bind-Value="AuthorP.Author_id" class="form-control"  disabled />
 
         </div>
     }
@@ -26,7 +26,7 @@
         <div>
 
             <label> Cédula </label>
-            <InputText @bind-Value="NuevoAutor.Author_id" placeholder="Introduce entre 9 y 12 dígitos" class="form-control" />
+            <InputText @bind-Value="AuthorP.Author_id" placeholder="Introduce entre 9 y 12 dígitos" class="form-control" />
 
         </div>
     }
@@ -35,19 +35,19 @@
     <div>
 
         <label> Nombre </label>
-        <InputText @bind-Value="NuevoAutor.Name" placeholder="Introduce al menos 3 caracteres" class="form-control" />
+        <InputText @bind-Value="AuthorP.Name" placeholder="Introduce al menos 3 caracteres" class="form-control" />
 
     </div>
     <div>
 
         <label> Edad </label>
-        <InputText @bind-Value="NuevoAutor.Age" class="form-control" placeholder="Edad entre 0 y 150 años" />
+        <InputText @bind-Value="AuthorP.Age" class="form-control" placeholder="Edad entre 0 y 150 años" />
 
     </div>
     <div>
 
         <label> Biografía </label>
-        <InputText @bind-Value="NuevoAutor.Biography" class="form-control" placeholder="Escribe al menos 15 caracteres" />
+        <InputText @bind-Value="AuthorP.Biography" class="form-control" placeholder="Escribe al menos 15 caracteres" />
 
     </div>
    
@@ -56,18 +56,18 @@
     <div class="modal-footer">
         @ChildContent
 
-        <button type="submit" class="btn btn-success">@Title</button>
+        <button type="submit" class="btn btn-success">@TitleP</button>
     </div>
 </EditForm>
 
 @code {
     [Parameter]
-    public Author NuevoAutor { get; set; }
+    public Author AuthorP { get; set; }
    
-    [Parameter] public string Title { get; set; }
-    [Parameter] public string Message { get; set; }
+    [Parameter] public string TitleP { get; set; }
+    [Parameter] public string MessageP { get; set; }
 
-    [Parameter] public EventCallback OnSubmit { get; set; }
+    [Parameter] public EventCallback OnMAuthorSubmit { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 
 

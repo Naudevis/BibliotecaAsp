@@ -6,7 +6,7 @@ namespace Biblioteca.Data.Models
     {
         [Key]
         [Required(ErrorMessage ="La cédula es requerida")]
-
+        [RegularExpression(@"^\d+$", ErrorMessage = "La cédula debe contener solo números, no se permiten letras.")]
         [Length(9,12,ErrorMessage ="El número de cedula debe de ir estre 9 y 15")]
         public string Author_id { get; set; }
 
@@ -14,7 +14,9 @@ namespace Biblioteca.Data.Models
         [MinLength(3, ErrorMessage = "El nombre debe de ser mayor a 2 dígitos")]
         public string Name { get; set; }
         [Required(ErrorMessage = "La edad es requerida")]
+        [RegularExpression(@"^\d+$", ErrorMessage = "No se permiten letras en la edad.")]
         [Range(1,150,ErrorMessage ="La edad de una persona debe de estar entre el rango de 0 a 150 años")]
+       
         public string Age { get; set; }
         [Required(ErrorMessage = "La biografía es requerida")]
         [MinLength(10, ErrorMessage = "La biografía debe ser mayor a 15 dígitos")]

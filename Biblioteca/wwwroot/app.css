@@ -98,29 +98,12 @@ h1:focus {
 
 .containerSearch {
     display: flex;
-    right: 40px;
+    right: 70px;
     width: 50%;
     position: absolute;
     justify-content: end;
 }
 
-.containerMessageBody {
-    max-height: 400px;
-    overflow-y: auto;
-    background-color: #ece5dd;
-    padding: 20px;
-}
 
-.containerMessageLeft {
-    width: 100%;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: flex-start;
-}
 
-.containerMessageRight {
-    width: 100%;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: flex-end;
-}
+
