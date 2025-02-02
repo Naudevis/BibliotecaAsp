@@ -21,4 +21,20 @@
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\images\0a8fc2aa-4b1f-414e-a27e-1aab332c66e1.png" />
+    <None Include="wwwroot\images\2610e39f-b588-4072-9318-af9247069b06.png" />
+    <None Include="wwwroot\images\2adf6113-8dd1-4187-9c86-0c0dbd1d2d05.png" />
+    <None Include="wwwroot\images\33cb8892-74a3-4d18-ae05-989886f0f374.jpg" />
+    <None Include="wwwroot\images\39134bad-a2d5-4218-857d-bf39b983705f.png" />
+    <None Include="wwwroot\images\3cba296a-82eb-494e-9e20-fd6fc80447ac.png" />
+    <None Include="wwwroot\images\a4ed1f2d-6e0b-4c1b-9201-06ab0f717e39.jpg" />
+    <None Include="wwwroot\images\b5e69118-8187-488d-9bbf-1eb7d8d4a93c.png" />
+    <None Include="wwwroot\images\bf5895e6-225a-476c-b109-f3084a6c2e5f.png" />
+    <None Include="wwwroot\images\d9775b43-013b-4164-99cf-011e034df0a5.png" />
+    <None Include="wwwroot\images\ef9da277-94b0-461c-aaab-626d9f279f82.png" />
+    <None Include="wwwroot\images\escudo.jpg" />
+    <None Include="wwwroot\images\PdfCabecera.jpg" />
+  </ItemGroup>
+
 </Project>

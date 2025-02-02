@@ -80,12 +80,22 @@ namespace Biblioteca.Business.Repositories
         }
         public async Task<List<Book>> GetBooksAsync()
         {
-            // Este ejemplo usa Entity Framework para obtener los libros de la base de datos
-            var person = await _context.Books.Include(b => b.Author).Where(b=>b.Status_id==1).GroupBy(b=>b.Author_id).ToListAsync();
-            Console.WriteLine(person[1].FirstOrDefault().Author_id);
-                
-            return await _context.Books.Include(b => b.Author).Where(b=>b.Author_id== person[1].FirstOrDefault().Author_id).ToListAsync();
-                
+           
+            try
+            {
+                var person = await _context.Books.Include(b => b.Author).Where(b => b.Status_id == 1).GroupBy(b => b.Author_id).ToListAsync();
+                Console.WriteLine(person[1].FirstOrDefault().Author_id);
+
+                var newList = await _context.Books.Include(b => b.Author).Where(b => b.Author_id == person[1].FirstOrDefault().Author_id).ToListAsync();
+                return newList != null ? newList : null;
+
+            }catch(Exception e)
+            {
+                Console.WriteLine($"Error : {e.Message}");
+                return null;
+            }// Este ejemplo usa Entity Framework para obtener los libros de la base de datos
+         
+
         }
 
 

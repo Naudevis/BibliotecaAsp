@@ -7,11 +7,17 @@
 
 @if (BookListPG == null)
 {
-    <p>Cargando libros...</p>
+   
+    <div class="container-fluid align-content-center justify-content-center">
+        <h3>Cargando libros...</h3>
+    </div>
 }
 else if (BookListPG.Count == 0)
 {
-    <p>No se encontraron libros.</p>
+   
+    <div class="container-fluid align-items-center justify-content-center d-flex  " style="min-height:400px;">
+        <h3>No se encontraron libros.</h3>
+    </div>
 }
 else
 {

@@ -25,21 +25,26 @@ else
         @foreach (var author in AuthorListP)
         {
             <div class="col">
-                <div class="card ">
+                <div class="card " style="height:auto">
                     <div>
 
                         <button style="top:4px;right:4px ;position:absolute" @onclick="()=>TakeAuthorToDelete(author)" data-bs-toggle="modal" data-bs-target="#MRemoveAuthorPG" title="Eliminar Autor" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="text-center" style="width:100%;margin-top:10px;">
-                        <img style="width:60%" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHXb_kmN-as-QCmEqdG9fOAg0VUQpHnrs5xP9gCQ8p7VkaPcuxs5BNG5C6fLwM-6nMXdk&usqp=CAU" alt="...">
+                    <div class="text-center contenedorImg" style="width:100%;margin-top:10px;">
+                        @if(author.ImagePath==null){
+                            <img class="img-responsive" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHXb_kmN-as-QCmEqdG9fOAg0VUQpHnrs5xP9gCQ8p7VkaPcuxs5BNG5C6fLwM-6nMXdk&usqp=CAU">
+                        }else{
+                            <img class="img-responsive" src="@author.ImagePath" alt="...">
+
+                        }
 
                     </div>
-                    <div class="card-body " title="Doble clic para editar" @ondblclick="() => OnRowDoubleClick(author)">
-                        <h5 class="card-title">@author.Name</h5>
-                        <p class="form-label">Edad: @author.Age</p>
-                        <p class="form-label">Libros: @author.Books.Count</p>
+                    <div class="card-body heading_section" style="margin-top:20px;" title="Doble clic para editar" @ondblclick="() => OnRowDoubleClick(author)">
+                        <h4 style="font-size: 20px;" class="card-title">@author.Name</h4>
+                        <h4 class="form-label">Edad: @author.Age</h4>
+                        <h4 class="form-label">Libros: @author.Books.Count</h4>
 
-                        <p class="form-label">Biografía: @author.Biography</p>
+                        <h4 class="form-label">Biografía: @author.Biography</h4>
 
                     </div>
 

@@ -23,8 +23,8 @@
             <input class="form-control" @oninput="SearchAuthor" type="text" name="name" style="width:auto" placeholder="Buscar por..." title="Todos(*)" />
         </div>
     </div>
-    <div class="container-fluid form-control" style="padding-top:30px !important;">
-      
+    <div class="container-fluid form-control" style="padding-top:30px !important; ">
+
 
 
         <ComponentGetAuthor AuthorListP="PaginatedAuthors" AuthorPG="UploadAuthorPToUpdate" RemoveAuthorPG="UploadAuthorPToDelete">
@@ -35,14 +35,14 @@
             <button class="btn page-link" @onclick="GoToPreviousPage" disabled="@(!HasPreviousPage)">Anterior</button>
             <span style="color:gray ;margin-left:5px;margin-right:5px;"> Página @currentPage de @totalPages </span>
             <button class="btn page-link " @onclick="GoToNextPage" disabled="@(!HasNextPage)">Siguiente</button>
-          
-                <div class="containerSearch align-items-center" style=" width: 17%;">
-                    <label style="margin-right:2%">Tarjetas por página</label>
+
+            <div class="containerSearch align-items-center" style=" width: 17%;">
+                <label style="margin-right:2%">Tarjetas por página</label>
                 <input class="form-control" @bind="@pageSize" min="1" max="8" type="number" name="name" style="width:49px" />
-                </div>
-        
+            </div>
+
         </div>
-       
+
 
         <br />
     </div>
@@ -97,6 +97,8 @@
     private Author newAuthor;
     public List<Author> newAuthors = new();
 
+
+
     private int totalPages => (int)Math.Ceiling(AuthorsList.Count / (double)pageSize);
     private bool HasPreviousPage => currentPage > 1;
     private bool HasNextPage => currentPage < totalPages;
@@ -109,6 +111,8 @@
     protected override async Task OnInitializedAsync()
     {
         newAuthors = (await AuthorRepository.GetAllAsync()).ToList();
+
+
         await LoadAuthors();
 
 
@@ -129,8 +133,12 @@
     {
         var existAuthor = await AuthorRepository.GetAuthorByIdAsync(newAuthor.Author_id);
 
+        Console.WriteLine(newAuthor.ImagePath);
+       
         if (existAuthor.Author_id == null) 
         {
+         
+     
             await AuthorRepository.AddAuthorAsync(newAuthor);
             Navigation.NavigateTo("/list-author", true);
         }
@@ -141,6 +149,7 @@
             existAuthor.Name = newAuthor.Name;
             existAuthor.Age = newAuthor.Age;
             existAuthor.Biography = newAuthor.Biography;
+            existAuthor.ImagePath = newAuthor.ImagePath;
             
 
             await AuthorRepository.UpdateAuthorAsync(existAuthor);

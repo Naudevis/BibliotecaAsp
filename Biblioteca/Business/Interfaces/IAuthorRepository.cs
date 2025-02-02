@@ -10,6 +10,6 @@ namespace Biblioteca.Business.Interfaces
         Task UpdateAuthorAsync(Author author);
         Task DeleteAuthorAsync(Author author);
         Task<IEnumerable<Author>> FindAuthors(string data);
-       
+        Task<string> SaveImageAsync(IFormFile imageFile);
     }
 }

@@ -40,6 +40,9 @@ namespace Biblioteca.Data.Models
         
         public DateTime EditionDate { get; set; }
 
+        public DateTime CreateDate { get; set; }
+        public string? ImagePathBook { get; set; }
+
         //Relación con el Author
         [Required(ErrorMessage ="El autor es requerido")]
         public string Author_id { get; set; }

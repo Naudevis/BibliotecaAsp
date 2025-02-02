@@ -1,36 +1,22 @@
-﻿
+﻿@page "/addemployee"
 @using Biblioteca.Business.Interfaces
-@using Microsoft.EntityFrameworkCore.Metadata.Internal
-
-@inject IAuthorRepository AuthorRepository
 @using Biblioteca.Data.Models
-@inject NavigationManager Navigation
+@inject IAuthorRepository EmployeeRepository
 
-<EditForm Model="AuthorP" OnValidSubmit="OnMAuthorSubmit">
+<h3>Agregar nuevo empleado</h3>
+
+<EditForm Model="AuthorP" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
 
-    <p style="color:red">@MessageP</p>
-    @if (TitleP == "Actualizar")
-    {
-        <div>
-
-            <label> Cédula </label>
-            <InputText @bind-Value="AuthorP.Author_id" class="form-control"  disabled />
-
-        </div>
-    }
-    else
-    {
-        <div>
+         <div>
 
             <label> Cédula </label>
             <InputText @bind-Value="AuthorP.Author_id" placeholder="Introduce entre 9 y 12 dígitos" class="form-control" />
 
         </div>
-    }
-
+    
 
 
     <div>
@@ -54,55 +40,33 @@
 
     <div>
         <label>Imagen:</label>
-        <InputFile class="form-control"  OnChange="HandleSubmit" />
+        <InputFile OnChange="HandleFileChange" />
     </div>
 
-
     <div class="modal-footer">
-        @ChildContent
+    
 
-        <button type="submit" class="btn btn-success" >@TitleP</button>
+        <button type="submit" class="btn btn-success">guardar</button>
     </div>
 </EditForm>
 
 @code {
-    [Parameter]
-    public Author AuthorP { get; set; }
-   
-    [Parameter] public string TitleP { get; set; }
-    [Parameter] public string MessageP { get; set; }
-
-    [Parameter] public EventCallback OnMAuthorSubmit { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-
-
+    private Author AuthorP = new Author();
     private IBrowserFile selectedImage;
 
- 
-
-    private async Task HandleSubmit(InputFileChangeEventArgs e)
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
     {
-        if (e.File != null)
-        {
-            selectedImage = e.File;
-            Console.WriteLine($"Archivo seleccionado: {selectedImage.Name}");
-            if (selectedImage.Size > 512000)
-            {
-                MessageP = "El archivo no puede ser mayor de 500 KB.";
-                return;  // No continuar si el archivo es demasiado grande
-            }
-        }
-        else
-        {
-            Console.WriteLine("No se seleccionó ningún archivo.");
-        }
+        selectedImage = e.File;
+    }
+
+    private async Task HandleSubmit()
+    {
         if (selectedImage != null)
         {
             try
             {
                 var formFile = await ConvertToIFormFile(selectedImage);
-                var imagePath = await AuthorRepository.SaveImageAsync(formFile);
+                var imagePath = await EmployeeRepository.SaveImageAsync(formFile);
                 AuthorP.ImagePath = imagePath;
             }
             catch (Exception ex)
@@ -113,7 +77,7 @@
 
         }
 
-        // await AuthorRepository.AddAuthorAsync(AuthorP);
+        await EmployeeRepository.AddAuthorAsync(AuthorP);
     }
 
     private async Task<IFormFile> ConvertToIFormFile(IBrowserFile browserFile)
@@ -128,6 +92,5 @@
                 ContentType = browserFile.ContentType
             };
     }
-
 
 }

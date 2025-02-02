@@ -105,5 +105,41 @@ h1:focus {
 }
 
 
+.contenedorImg {
+    top:20px;
+    height: 260px;
+    /* Alto deseado */
+    overflow: hidden;
+    /* Oculta la parte de la imagen que se sale del contenedor */
+    position: relative;
+}
 
 
+    .contenedorImg img {
+        width: 60%;
+        /* La imagen ocupa el 100% del contenedor */
+        height: auto;
+        /* Mantiene la proporción original */
+        position: absolute;
+        /* Permite centrar la imagen */
+        top: 50%;
+        /* Ajusta la imagen al centro verticalmente */
+        left: 50%;
+        /* Ajusta la imagen al centro horizontalmente */
+        transform: translate(-50%, -50%);
+        /* Centra la imagen */
+    }
+
+.heading_section {
+    border-top: solid #1ed085 2px;
+    background: #15283c;
+}
+
+    .heading_section h4 {
+        color: #fff;
+        margin: 0;
+        font-weight: 200;
+        text-align: center;
+        padding: 1px 0 1px;
+        font-size: 15px;
+    }

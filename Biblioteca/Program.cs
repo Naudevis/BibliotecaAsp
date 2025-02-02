@@ -15,7 +15,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddDbContext<AppDBContext>(option => 
 option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionDB")));
-Console.WriteLine((Math.Round((5-2)/2.0)*15));
+
 
 //Configuramos las inyecciones
 
