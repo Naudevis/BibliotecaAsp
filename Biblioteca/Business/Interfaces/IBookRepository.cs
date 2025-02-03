@@ -12,7 +12,9 @@ namespace Biblioteca.Business.Interfaces
         Task DeleteBookAsync(Book book);
         Task<IEnumerable<Book>> SearchBooks(string data);
         byte[] GeneratePdfReport(List<Book> books);
-        Task<List<Book>> GetBooksAsync();
+        Task<List<Book>> GetBooksMoreOldAsync();
+        Task<IEnumerable<Book>> SearchByAuthorBooks(string data);
+        byte[] GeneratePdfReportAuthor(List<Book> books);
 
     }
 }

@@ -130,6 +130,105 @@ h1:focus {
         /* Centra la imagen */
     }
 
+
+
+.contenedorImgAuthor {
+    top: 20px;
+    height: 150px;
+    /* Alto deseado */
+    overflow: hidden;
+    /* Oculta la parte de la imagen que se sale del contenedor */
+    position: relative;
+}
+.contenedorImgCarousel {
+    top: 20px;
+    height: 450px;
+    /* Alto deseado */
+    overflow: hidden;
+    /* Oculta la parte de la imagen que se sale del contenedor */
+    position: relative;
+}
+    .contenedorImgCarousel img {
+        width: 60%;
+        /* La imagen ocupa el 100% del contenedor */
+        height: auto;
+        /* Mantiene la proporción original */
+        position: absolute;
+        /* Permite centrar la imagen */
+        top: 50%;
+        /* Ajusta la imagen al centro verticalmente */
+        left: 50%;
+        /* Ajusta la imagen al centro horizontalmente */
+        transform: translate(-50%, -50%);
+        /* Centra la imagen */
+    }
+
+
+    .contenedorImgAuthor img {
+        width: 60%;
+        /* La imagen ocupa el 100% del contenedor */
+        height: auto;
+        /* Mantiene la proporción original */
+        position: absolute;
+        /* Permite centrar la imagen */
+        top: 50%;
+        /* Ajusta la imagen al centro verticalmente */
+        left: 50%;
+        /* Ajusta la imagen al centro horizontalmente */
+        transform: translate(-50%, -50%);
+        /* Centra la imagen */
+    }
+
+
+.info_people {
+    padding: 35px;
+    display: flex;
+}
+
+    .info_people .p_info_img {
+        width: 30%;
+    }
+
+        .info_people .p_info_img img {
+            width: 100%;
+            border-radius: 5px;
+        }
+
+    .info_people .user_info_cont {
+        width: 60%;
+        padding-left: 30px;
+        padding-top: 25px;
+    }
+
+        .info_people .user_info_cont h4 {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .info_people .user_info_cont p {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+            .info_people .user_info_cont p.p_status {
+                font-weight: 600;
+                color: #ff5722;
+                margin-top: 10px;
+            }
+.white_shd {
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+    margin-top: 0;
+}
+.full {
+    width: 100%;
+    float: left;
+}
+.margin_bottom_30 {
+    margin-bottom: 30px;
+}
 .heading_section {
     border-top: solid #1ed085 2px;
     background: #15283c;
@@ -143,3 +242,7 @@ h1:focus {
         padding: 1px 0 1px;
         font-size: 15px;
     }
+p {
+    color: #58718a;
+    line-height: 21px;
+}

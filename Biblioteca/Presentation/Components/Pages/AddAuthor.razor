@@ -2,6 +2,7 @@
 @using Biblioteca.Business.Interfaces
 @using Biblioteca.Data.Models
 @inject IAuthorRepository EmployeeRepository
+@inject IImageRepository ImageRepository
 
 <h3>Agregar nuevo empleado</h3>
 
@@ -66,7 +67,7 @@
             try
             {
                 var formFile = await ConvertToIFormFile(selectedImage);
-                var imagePath = await EmployeeRepository.SaveImageAsync(formFile);
+                var imagePath = await ImageRepository.SaveImageAsync(formFile);
                 AuthorP.ImagePath = imagePath;
             }
             catch (Exception ex)

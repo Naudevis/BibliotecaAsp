@@ -1,4 +1,4 @@
-﻿using Biblioteca.Data.Validations;
+﻿
 using System.ComponentModel.DataAnnotations;
 
 namespace Biblioteca.Data.Models
@@ -23,7 +23,6 @@ namespace Biblioteca.Data.Models
         [MinLength(10, ErrorMessage = "La biografía debe ser mayor a 15 dígitos")]
         public string Biography { get; set; }
 
-        [MaxFileSize(512000)]
         public string? ImagePath { get; set; }
         public int Status_id { get; set; }
         public Status StatusAuthor { get; set; }

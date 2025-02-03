@@ -21,16 +21,17 @@ else if (AuthorListP.Count == 0)
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-4 g-4">
+    <div class="row contenedorUsuarios">
         @foreach (var author in AuthorListP)
         {
-            <div class="col">
-                <div class="card " style="height:auto">
+            <div class="col-md-6 col-lg-4">
+                <div class="full white_shd margin_bottom_30">
+                <div class="info_people " style="height:auto">
                     <div>
 
                         <button style="top:4px;right:4px ;position:absolute" @onclick="()=>TakeAuthorToDelete(author)" data-bs-toggle="modal" data-bs-target="#MRemoveAuthorPG" title="Eliminar Autor" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="text-center contenedorImg" style="width:100%;margin-top:10px;">
+                        <div class="p_info_img contenedorImgAuthor" style="top:10px;">
                         @if(author.ImagePath==null){
                             <img class="img-responsive" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHXb_kmN-as-QCmEqdG9fOAg0VUQpHnrs5xP9gCQ8p7VkaPcuxs5BNG5C6fLwM-6nMXdk&usqp=CAU">
                         }else{
@@ -39,17 +40,19 @@ else
                         }
 
                     </div>
-                    <div class="card-body heading_section" style="margin-top:20px;" title="Doble clic para editar" @ondblclick="() => OnRowDoubleClick(author)">
+                    <div class="user_info_cont"  title="Doble clic para editar" @ondblclick="() => OnRowDoubleClick(author)">
                         <h4 style="font-size: 20px;" class="card-title">@author.Name</h4>
-                        <h4 class="form-label">Edad: @author.Age</h4>
-                        <h4 class="form-label">Libros: @author.Books.Count</h4>
+                            <p> <strong>Edad:</strong>  @author.Age</p>
+                            <p> <strong>Libros:</strong>  @author.Books.Count</p>
 
-                        <h4 class="form-label">Biografía: @author.Biography</h4>
+                            <p> <strong>Biografía:</strong>  @author.Biography</p>
 
                     </div>
 
                 </div>
+            </div> 
             </div>
+           
         }
     </div>
 }

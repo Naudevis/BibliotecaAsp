@@ -21,6 +21,7 @@ option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionDB")));
 
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
 
 

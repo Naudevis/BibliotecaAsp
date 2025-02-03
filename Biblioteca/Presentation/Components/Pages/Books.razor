@@ -94,20 +94,20 @@
 </div>
 
 @code {
-    private List<Book> BooksList = new List<Book>();
-    private int currentPage = 1;
-    private int pageSize = 4;
+ 
     private string ModalTitle = "Agregar";
 
     private string MAddtxtSearch = "";
     private string ErrorMessageBook = "";
     private Book newBook;
-    public List<Author> newAuthors = new();
 
+    public List<Author> newAuthors = new();
+    private List<Book> BooksList = new List<Book>();
+    private int currentPage = 1;
+    private int pageSize = 4;
     private int totalPages => (int)Math.Ceiling(BooksList.Count / (double)pageSize);
     private bool HasPreviousPage => currentPage > 1;
     private bool HasNextPage => currentPage < totalPages;
-
     private List<Book> PaginatedBooks =>
         BooksList.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
 
@@ -120,6 +120,67 @@
 
 
     }
+
+
+    private async Task UpdateBookList()
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(MAddtxtSearch))
+            {
+                BooksList = (await BookRepository.SearchBooks(MAddtxtSearch)).ToList();
+            }
+            else
+            {
+                await LoadBooks();
+            }
+            UpdatePagination();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al actualizar la lista de clientes: {ex.Message}");
+        }
+    }
+
+    private async Task LoadBooks()
+    {
+        try
+        {
+            BooksList = (await BookRepository.GetAllAsync()).ToList();
+            UpdatePagination();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los clientes: {ex.Message}");
+
+        }
+    }
+
+
+    private void UpdatePagination()
+    {
+        currentPage = 1;
+    }
+
+    private void GoToPreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+        }
+    }
+
+    private void GoToNextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+        }
+    }
+
+
+
+
     protected override void OnInitialized()
     {
 
@@ -150,6 +211,8 @@
             existBook.Stock = newBook.Stock;
             existBook.Pages = newBook.Pages;
             existBook.Title = newBook.Title;
+            existBook.ImagePathBook = newBook.ImagePathBook;
+
 
             await BookRepository.UpdateBookAsync(existBook);
 
@@ -223,62 +286,6 @@
     }
 
 
-
-    private async Task UpdateBookList()
-    {
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(MAddtxtSearch))
-            {
-                BooksList = (await BookRepository.SearchBooks(MAddtxtSearch)).ToList();
-            }
-            else
-            {
-                await LoadBooks();
-            }
-            UpdatePagination();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al actualizar la lista de clientes: {ex.Message}");
-        }
-    }
-
-    private async Task LoadBooks()
-    {
-        try
-        {
-            BooksList = (await BookRepository.GetAllAsync()).ToList();
-            UpdatePagination();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar los clientes: {ex.Message}");
-
-        }
-    }
-
-
-    private void UpdatePagination()
-    {
-        currentPage = 1; 
-    }
-
-    private void GoToPreviousPage()
-    {
-        if (currentPage > 1)
-        {
-            currentPage--;
-        }
-    }
-
-    private void GoToNextPage()
-    {
-        if (currentPage < totalPages)
-        {
-            currentPage++;
-        }
-    }
 
 
 

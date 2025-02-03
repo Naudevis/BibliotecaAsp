@@ -1,6 +1,47 @@
 ﻿@page "/"
+@using Biblioteca.Business.Interfaces
+@using Biblioteca.Data.Models
+@inject IBookRepository BookRepository
 
+@rendermode InteractiveServer
+<br />
+<h1 class="justify-content-center align-items-center d-flex">Biblioteca de San Pedro</h1>
+<br />
+<div class="container-fluid text-center justify-content-center align-items-center d-flex">
 
+    <div class="w-75">
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+         
+                <div class="carousel-item active contenedorImgCarousel">
+                    <img src="https://www.educarchile.cl/sites/default/files/styles/style_image_slider_multimedia/public/2024-04/biblioteca_0.png?itok=On1aq08D" class="d-block w-100" alt="...">
+                </div>
+                <div class="carousel-item contenedorImgCarousel">
+                    <img src="https://i0.wp.com/www.julianmarquina.es/wp-content/uploads/Las-bibliotecas-son-las-pobres-de-la-Cultura-en-cuanto-a-presupuestos.jpg?fit=1000%2C667&ssl=1" class="d-block w-100" alt="...">
+                </div>         
+                <div class="carousel-item contenedorImgCarousel">
+                    <img src="https://i.blogs.es/9d0ebf/biblioteca/1366_2000.jpg" class="d-block w-100" alt="...">
+                </div> 
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    </div>
+</div>
 
+@code{
+    private List<Book> bookList = new();
 
+    protected override async Task OnInitializedAsync(){
 
+        bookList = (await BookRepository.GetAllAsync()).Take(3).ToList();
+    }
+ 
+ 
+ }

@@ -3,6 +3,7 @@
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 
 @inject IAuthorRepository AuthorRepository
+@inject IImageRepository ImageRepository
 @using Biblioteca.Data.Models
 @inject NavigationManager Navigation
 
@@ -61,14 +62,14 @@
     <div class="modal-footer">
         @ChildContent
 
-        <button type="submit" class="btn btn-success" >@TitleP</button>
+        <button type="submit" class="btn btn-success" @onclick="UploadImage">@TitleP</button>
     </div>
 </EditForm>
 
 @code {
     [Parameter]
     public Author AuthorP { get; set; }
-   
+
     [Parameter] public string TitleP { get; set; }
     [Parameter] public string MessageP { get; set; }
 
@@ -79,7 +80,7 @@
 
     private IBrowserFile selectedImage;
 
- 
+
 
     private async Task HandleSubmit(InputFileChangeEventArgs e)
     {
@@ -91,18 +92,27 @@
             {
                 MessageP = "El archivo no puede ser mayor de 500 KB.";
                 return;  // No continuar si el archivo es demasiado grande
+            }else{
+                MessageP = "";
+                return;
             }
         }
         else
         {
             Console.WriteLine("No se seleccionó ningún archivo.");
         }
+
+
+        // await AuthorRepository.AddAuthorAsync(AuthorP);
+    }
+
+    private async Task UploadImage(){
         if (selectedImage != null)
         {
             try
             {
                 var formFile = await ConvertToIFormFile(selectedImage);
-                var imagePath = await AuthorRepository.SaveImageAsync(formFile);
+                var imagePath = await ImageRepository.SaveImageAsync(formFile);
                 AuthorP.ImagePath = imagePath;
             }
             catch (Exception ex)
@@ -113,7 +123,6 @@
 
         }
 
-        // await AuthorRepository.AddAuthorAsync(AuthorP);
     }
 
     private async Task<IFormFile> ConvertToIFormFile(IBrowserFile browserFile)

@@ -10,12 +10,12 @@ namespace Biblioteca.Business.Repositories
     public class AuthorRepository : IAuthorRepository
     {
 
-        private readonly IWebHostEnvironment _env;
+
         private readonly AppDBContext _context;
 
-        public AuthorRepository(IWebHostEnvironment env, AppDBContext context)
+        public AuthorRepository( AppDBContext context)
         {
-            _env = env;
+            
             _context = context;
         }
         public async Task<Author> AddAuthorAsync(Author author)
@@ -89,24 +89,6 @@ namespace Biblioteca.Business.Repositories
 
 
 
-        public async Task<string> SaveImageAsync(IFormFile imageFile)
-        {
-            if (imageFile != null && imageFile.Length > 0)
-            {
-                // Genera un nombre único para la imagen
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-                var filePath = Path.Combine(_env.WebRootPath, "images", fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(fileStream);
-                }
-
-                return "images/" + fileName;  // Ruta relativa
-            }
-
-            return null;
-        }
     }
 }
 

@@ -1,10 +1,12 @@
 ﻿
 @page "/addbook"
 @using Biblioteca.Business.Interfaces
+
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 
 @inject IBookRepository BookRepository
 @inject IAuthorRepository AuthorRepository
+@inject IImageRepository ImageRepository
 @using Biblioteca.Data.Models
 @inject NavigationManager Navigation
 
@@ -74,6 +76,10 @@
         </InputSelect>
 
     </div>
+    <div>
+        <label>Imagen:</label>
+        <InputFile class="form-control" OnChange="HandleSubmit" />
+    </div>
 
 
     <div class="modal-footer">
@@ -93,5 +99,53 @@
     [Parameter] public EventCallback OnMBookSubmit { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 
+    private IBrowserFile selectedImage;
 
+    private async Task HandleSubmit(InputFileChangeEventArgs e)
+    {
+        if (e.File != null)
+        {
+            selectedImage = e.File;
+            Console.WriteLine($"Archivo seleccionado: {selectedImage.Name}");
+            if (selectedImage.Size > 512000)
+            {
+                MessageP = "El archivo no puede ser mayor de 500 KB.";
+                return;  // No continuar si el archivo es demasiado grande
+            }
+        }
+        else
+        {
+            Console.WriteLine("No se seleccionó ningún archivo.");
+        }
+        if (selectedImage != null)
+        {
+            try
+            {
+                var formFile = await ConvertToIFormFile(selectedImage);
+                var imagePath = await ImageRepository.SaveImageAsync(formFile);
+                BookP.ImagePathBook = imagePath;
+            }
+            catch (Exception ex)
+            {
+                // Log o mostrar el error
+                Console.WriteLine($"Error al guardar la imagen: {ex.Message}");
+            }
+
+        }
+
+        // await AuthorRepository.AddAuthorAsync(AuthorP);
+    }
+
+    private async Task<IFormFile> ConvertToIFormFile(IBrowserFile browserFile)
+    {
+        var stream = new MemoryStream();
+        await browserFile.OpenReadStream().CopyToAsync(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        return new FormFile(stream, 0, stream.Length, browserFile.Name, browserFile.Name)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = browserFile.ContentType
+            };
+    }
 }

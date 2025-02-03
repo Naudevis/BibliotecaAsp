@@ -4,47 +4,140 @@
 
 @inject IBookRepository bookReportService
 @inject IJSRuntime JSRuntime
+@inject IAuthorRepository AuthorRepository
+@inject NavigationManager Navigation
 
-<h3>Reporte de Libros</h3>
 
-@if (books== null)
+
+
+
+@if (books == null || booksAuthor == null)
 {
     <p>No se encontraron libros</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Código</th>
-                <th>Título</th>
-                <th>Stock</th>
-                <th>Autor</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var book in books)
-            {
-                <tr>
-                    <td>@book.Id_Book</td>
-                    <td>@book.Title</td>
-                    <td>@book.Stock</td>
-                    <td>@book.Author.Name</td>
-                </tr>
-            }
-        </tbody>
-    </table>
 
-    <button class="btn btn-primary" @onclick="DownloadPdf">Descargar PDF</button>
+
+    <div class="shadow bg-body-tertiary rounded" style="margin:1%;margin-top:2%">
+        <div class="containerHead container-fluid shadow-sm p-3 mb-5 bg-body-tertiary rounded" style="margin-bottom:1px !important;">
+            <h3 style="padding-left:20px;">Reportes</h3>
+
+            @* <div class="containerSearch"> *@
+
+            @*     <input class="form-control" @oninput="SearchAuthor" type="text" name="name" style="width:auto" placeholder="Buscar por..." title="Todos(*)" /> *@
+            @* </div> *@
+        </div>
+        <div class="container-fluid form-control " style="padding-top:30px !important; ">
+
+
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+
+                <div class="col">
+                    <div class="card ">
+
+                        <div  style="margin-top:20px;" class="card-body " >
+
+                            <h3>Libros registrados más antiguos</h3>
+                            <br />
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Título</th>
+                                        <th>Stock</th>
+                                        <th>Fecha de registro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var book in books)
+                                    {
+                                        <tr>
+                                            <td>@book.Id_Book</td>
+                                            <td>@book.Title</td>
+                                            <td>@book.Stock</td>
+                                            <td>@book.CreateDate.ToShortDateString()</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <button class="btn btn-primary" @onclick="DownloadPdf">Descargar PDF</button>
+
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card ">
+                        <div class="containerSearch">
+                            <select class="form-select" @onchange="SearchAuthor" style="margin-top:40px;">
+                                <option value="" selected disabled>Seleccione un autor</option>
+                                @foreach (var author in AuthorsList)
+                                {
+                                    <option value="@author.Author_id">@author.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div style="margin-top:20px;" class="card-body ">
+
+                            <h3>Libros por autor</h3>
+                            <br />
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Título</th>
+                                        <th>Stock</th>
+                                        <th>Autor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var book in booksAuthor)
+                                    {
+                                        <tr>
+                                            <td>@book.Id_Book</td>
+                                            <td>@book.Title</td>
+                                            <td>@book.Stock</td>
+                                            <td>@book.Author.Name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <button class="btn btn-primary" @onclick="DownloaAuthordPdf">Descargar PDF</button>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <br />
+    </div>
+
+
+
 }
 
 @code {
     private List<Book> books= new();
+    private List<Book> booksAuthor = new();
+    private List<Author> AuthorsList = new List<Author>();
+
 
     protected override async Task OnInitializedAsync()
     {
         // Obtener los datos de los libros desde el servicio
-        books = await bookReportService.GetBooksAsync();
+        books = (await bookReportService.GetBooksMoreOldAsync()).Take(3).ToList();
+        AuthorsList = (await AuthorRepository.GetAllAsync()).ToList();
+
     }
 
     private async Task DownloadPdf()
@@ -61,4 +154,32 @@ else
         // Llamar al JS para descargar el archivo
         await JSRuntime.InvokeVoidAsync("blazorDownloadFile", fileName, contentBytes);
     }
+    private async Task DownloaAuthordPdf()
+    {
+        var pdfContent = bookReportService.GeneratePdfReportAuthor(booksAuthor);
+
+        // Usar JSInterop para permitir que el cliente descargue el archivo PDF
+        var fileName = "reporte_libros.pdf";
+        var fileContent = new ByteArrayContent(pdfContent);
+
+        // Convertir el contenido del ByteArrayContent a un array de bytes
+        var contentBytes = await fileContent.ReadAsByteArrayAsync();
+
+        // Llamar al JS para descargar el archivo
+        await JSRuntime.InvokeVoidAsync("blazorDownloadFile", fileName, contentBytes);
+    }
+
+
+
+    private async Task SearchAuthor(ChangeEventArgs e)
+    {
+        var author = e.Value?.ToString() ?? string.Empty;
+
+        booksAuthor = (await bookReportService.SearchByAuthorBooks(author)).Take(3).ToList();
+
+    }
+
+
+
+   
 }
